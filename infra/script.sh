@@ -8,7 +8,7 @@ terraform apply -auto-approve
 # 2. Récupérer l'IP publique de l'instance EC2
 echo "Récupération de l'IP publique de l'instance EC2..."
 PUBLIC_IP=$(terraform output -raw instance_public_ip)
-echo "L'IP publique de l'instance EC2 est : $PUBLIC_IP"
+echo "IP publique de l'instance EC2 est : $PUBLIC_IP"
 
 # 3. Récupérer le chemin de la clé privée générée par Terraform
 PRIVATE_KEY_PATH=$(terraform output -raw private_key_path)
