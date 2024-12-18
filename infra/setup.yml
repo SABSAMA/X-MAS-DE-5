@@ -1,0 +1,52 @@
+---
+- name: Configure EC2 instance
+  hosts: all
+  become: yes  # Pour utiliser sudo
+  remote_user: ec2-user
+  vars:
+    ansible_python_interpreter: /usr/bin/python3.9  # Définit explicitement l'interpréteur
+  tasks:
+    - name: Install Docker
+      yum:
+        name: docker
+        state: present
+
+    - name: Install Docker Compose manually
+      shell: |
+        sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+      args:
+        creates: /usr/local/bin/docker-compose  # Vérifie si Docker Compose est déjà installé
+
+    - name: Add ec2-user to the docker group
+      user:
+        name: ec2-user
+        groups:
+          - docker  # Spécifie explicitement le groupe
+        append: yes
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Set permissions for the copied files
+      file:
+        path: "/home/ec2-user/app"
+        owner: ec2-user
+        group: ec2-user
+        mode: "0755"
+        recurse: yes
+
+    - name: Copy application files to the instance
+      copy:
+        src: "{{ playbook_dir }}/../app/"
+        dest: /home/ec2-user/app/
+        mode: '0755'
+        remote_src: no  # Source is on the local machine
+
+    - name: Run docker-compose up
+      command: /usr/local/bin/docker-compose -f /home/ec2-user/app/docker-compose.yml up -d
+      environment:
+        PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
