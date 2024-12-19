@@ -19,12 +19,11 @@ resource "aws_key_pair" "example_key" {
   public_key = tls_private_key.example.public_key_openssh
 }
 
-
-# Groupe de sécurité pour autoriser le SSH, ainsi que les ports 8000 et 5000
+# Groupe de sécurité pour autoriser le SSH, ainsi que les ports 3000 (Grafana) et 9090 (Prometheus)
 resource "aws_security_group" "allow_ssh_and_ports" {
   name        = "allow_ssh_and_ports"
-  description = "Allow SSH, port 8000 and port 5000 inbound traffic"
-  vpc_id      = "vpc-014fc495b3068f0f7"
+  description = "Allow SSH, port 3000 (Grafana) and port 9090 (Prometheus) inbound traffic"
+  vpc_id      = "vpc-014fc495b3068f0f7"  # Remplace par ton VPC ID
 
   ingress {
     from_port   = 22
@@ -33,7 +32,23 @@ resource "aws_security_group" "allow_ssh_and_ports" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Autorisation pour le port 8000
+  # Autorisation pour le port 3000 (Grafana)
+  ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Autorisation pour le port 9090 (Prometheus)
+  ingress {
+    from_port   = 9090
+    to_port     = 9090
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Autorisation pour le port 8000 (API FastAPI)
   ingress {
     from_port   = 8000
     to_port     = 8000
@@ -41,7 +56,7 @@ resource "aws_security_group" "allow_ssh_and_ports" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Autorisation pour le port 5000
+  # Autorisation pour le port 5000 (MLflow)
   ingress {
     from_port   = 5000
     to_port     = 5000
@@ -56,7 +71,6 @@ resource "aws_security_group" "allow_ssh_and_ports" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
-
 
 # Instance EC2
 resource "aws_instance" "example" {
