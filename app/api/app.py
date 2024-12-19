@@ -25,6 +25,4 @@ def predict(request: TextRequest):
         
         # Log de la prédiction dans MLflow
         mlflow.log_metric("prediction_score", prediction[0]["score"])
-        
-        # Retourne la prédiction
         return {"prediction": prediction}
