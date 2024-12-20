@@ -23,3 +23,8 @@ echo "Démarrage de la configuration de l'instance via Ansible..."
 ansible-playbook -i "$PUBLIC_IP," --private-key "$PRIVATE_KEY_PATH" setup.yml -e "ansible_ssh_extra_args='-o StrictHostKeyChecking=no'"
 
 echo "Configuration terminée avec succès!"
+
+echo "GRAFANA =>$PUBLIC_IP:3000"
+echo "PROMETHEUS => $PUBLIC_IP:9090"
+echo "MFLOW => $PUBLIC_IP:5000"
+echo "API => $PUBLIC_IP:8000"
