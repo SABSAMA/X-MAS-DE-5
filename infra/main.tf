@@ -75,7 +75,7 @@ resource "aws_security_group" "allow_ssh_and_ports" {
 # Instance EC2
 resource "aws_instance" "example" {
   ami             = "ami-07dc1ccdcec3b4eab"
-  instance_type   = "t2.micro"
+  instance_type   = "t3.large" 
   key_name        = aws_key_pair.example_key.key_name
   security_groups = [aws_security_group.allow_ssh_and_ports.name]
 
