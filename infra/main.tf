@@ -3,8 +3,8 @@ provider "aws" {
 }
 
 resource "aws_ebs_volume" "my_volume" {
-  availability_zone = "eu-west-3a"  # Remplace par la zone de disponibilité appropriée
-  size              = 25             # Taille du volume en Go
+  availability_zone = "eu-west-3a"
+  size              = 35             # Taille du volume en Go
 }
 
 # Génération de la clé privée
@@ -23,7 +23,7 @@ resource "aws_key_pair" "example_key" {
 resource "aws_security_group" "allow_ssh_and_ports" {
   name        = "allow_ssh_and_ports"
   description = "Allow SSH, port 3000 (Grafana) and port 9090 (Prometheus) inbound traffic"
-  vpc_id      = "vpc-014fc495b3068f0f7"  # Remplace par ton VPC ID
+  vpc_id      = "vpc-014fc495b3068f0f7"
 
   ingress {
     from_port   = 22
@@ -80,7 +80,7 @@ resource "aws_instance" "example" {
   security_groups = [aws_security_group.allow_ssh_and_ports.name]
 
   root_block_device {
-    volume_size = 25  # Taille du disque principal (25 Go)
+    volume_size = 35  # Taille du disque principal
   }
 
   associate_public_ip_address = true
