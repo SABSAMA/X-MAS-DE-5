@@ -83,6 +83,8 @@ resource "aws_instance" "example" {
     volume_size = 25  # Taille du disque principal (25 Go)
   }
 
+  associate_public_ip_address = true
+
   tags = {
     Name = "mlops-instance-europe"
   }
