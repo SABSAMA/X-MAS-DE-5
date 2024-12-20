@@ -23,6 +23,10 @@ ssh-keyscan -H "$PUBLIC_IP" >> ~/.ssh/known_hosts
 
 # 5. Lancer Ansible pour configurer l'instance
 echo "Démarrage de la configuration de l'instance via Ansible..."
+
+# Sleep pour attendre que le serveur démarre coté AWS
+sleep 10
+
 ansible-playbook -i "$PUBLIC_IP," --private-key "$PRIVATE_KEY_PATH" setup.yml -e "ansible_ssh_extra_args='-o StrictHostKeyChecking=no'"
 
 # Boucle jusqu'à ce que la configuration via Ansible réussisse
@@ -39,7 +43,6 @@ while true; do
     fi
 done
 
-echo ""
 echo "GRAFANA => $PUBLIC_IP:3000"
 echo "PROMETHEUS => $PUBLIC_IP:9090"
 echo "MFLOW => $PUBLIC_IP:5000"
