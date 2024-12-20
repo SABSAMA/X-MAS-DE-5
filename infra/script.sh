@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "Arrêt de toutes les instances EC2 en cours d'exécution..."
+terraform destroy -auto-approve
+
 # 1. Créer l'infrastructure avec Terraform
 echo "Création de l'infrastructure avec Terraform..."
 terraform init
@@ -22,9 +25,22 @@ ssh-keyscan -H "$PUBLIC_IP" >> ~/.ssh/known_hosts
 echo "Démarrage de la configuration de l'instance via Ansible..."
 ansible-playbook -i "$PUBLIC_IP," --private-key "$PRIVATE_KEY_PATH" setup.yml -e "ansible_ssh_extra_args='-o StrictHostKeyChecking=no'"
 
-echo "Configuration terminée avec succès!"
+# Boucle jusqu'à ce que la configuration via Ansible réussisse
+while true; do
+    ansible-playbook -i "$PUBLIC_IP," --private-key "$PRIVATE_KEY_PATH" setup.yml -e "ansible_ssh_extra_args='-o StrictHostKeyChecking=no'"
+    
+    # Vérifier si la commande Ansible a réussi
+    if [ $? -eq 0 ]; then
+        echo "Configuration réussie !"
+        break
+    else
+        echo "La configuration a échoué. Nouvelle tentative dans 5 secondes..."
+        sleep 5
+    fi
+done
 
-echo "GRAFANA =>$PUBLIC_IP:3000"
+echo ""
+echo "GRAFANA => $PUBLIC_IP:3000"
 echo "PROMETHEUS => $PUBLIC_IP:9090"
 echo "MFLOW => $PUBLIC_IP:5000"
 echo "API => $PUBLIC_IP:8000"

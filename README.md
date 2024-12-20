@@ -56,7 +56,7 @@ Ce projet met en place une infrastructure MLOps complète sur AWS. L'architectur
 1. **Cloner le repository**
    ```bash
    git clone https://github.com/SABSAMA/X-MAS-DE-5
-   cd X-MAS-DE-5
+   cd X-MAS-DE-5/infra/
    ```
 
 2. **Configurer l'instance EC2 avec Ansible**

@@ -1,2 +1,5 @@
 .terraform
 *.tfstate
+infra/example-key.pem
+infra/terraform.tfstate.backup
+infra/terraform.tfstate
